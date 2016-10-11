@@ -1,4 +1,4 @@
-import java.io.*
+import java.io.*;
 
 public class GrepReader extends BufferedReader {
 	String pattern;
@@ -17,7 +17,7 @@ public class GrepReader extends BufferedReader {
 	public final String readLine() throws IOException {
 		String line;
 		do { line = super.readLine();}
-		while ((line != NULL) && line.indexOf(pattern) == -1);
+		while ((line != null) && line.indexOf(pattern) == -1);
 		return line;
 	}
 }
