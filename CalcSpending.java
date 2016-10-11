@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.Date;
+import FilterCharStreams.java;
 
 public class CalcSpending {
 	public static void printinfo(URL url) throws IOException {
@@ -17,7 +18,8 @@ public class CalcSpending {
 		if (c instanceof HttpURLConnection) {
 			HttpURLConnection h = (HttpURLConnection) c;
 			System.out.println("  Request Method: " + h.getRequestMethod());
-			System.out.println("  Response Message: " + h.getResponseMessage());
+			System.out.println("  Response Message: " + \
+			h.getResponseMessage());
 			System.out.println("  Response Code: " + h.getResponseCode());
 		}
 
@@ -29,6 +31,13 @@ public class CalcSpending {
 		catch (Exception e) {
 			System.err.println(e);
 			System.err.println("Usage: java GetURLInfo <url>");
+		}
+
+		/* Prints the line of text that contains the correct banking
+		   information */
+		try {
+			if (args.length != 2)
+				throw new IllegalArgumentException("Wrong number of args");
 		}
 	}
 }
