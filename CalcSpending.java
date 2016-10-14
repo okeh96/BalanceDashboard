@@ -26,18 +26,18 @@ public class CalcSpending {
 	}
 
 	public static void main(String[] args) {
-		try { printinfo(new URL(args[0])); }
+		/*try { printinfo(new URL(args[0])); }
 		catch (Exception e) {
 			System.err.println(e);
 			System.err.println("Usage: java GetURLInfo <url>");
 		} 
 
-
-
+			String message = helperfunctions.getMessage()
+*/
 		/* Prints the line of text that contains the correct banking
 		   information */
-		//try {
-			if (args.length != 2)
+		//try { 
+		/*	if (args.length != 2)
 				throw new IllegalArgumentException("Wrong number of args");
 			helperfunctions.GrepReader in = new helperfunctions.GrepReader(new FileReader(), "default");
 			String line;
@@ -46,12 +46,15 @@ public class CalcSpending {
 				System.out.println(line);
 			}
 
-			in.close();
+			in.close();*/
 		//}
 
 		/*catch (Exception e) {
 			System.err.println(e);
 			System.out.println("Usage: java CalcSpending" + " <pattern> <file>");
 		}*/
+
+
+		getMessage
 	}
 }
