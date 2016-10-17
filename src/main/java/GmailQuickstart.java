@@ -110,6 +110,7 @@ public class GmailQuickstart {
             for (Label label : labels) {
                 System.out.printf("- %s\n", label.getName());
             }
+            GET https://www.googleapis.com/gmail/v1/users/userId/messages/id
         }
     }
 

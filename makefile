@@ -1,17 +1,44 @@
-JCC = javac
+# JCC = javac
+
+# JFLAGS = -g
+
+# JCLASSDIR = helperfunctions
+
+# default: CalcSpending.class GmailAPIcall.class
+
+# CalcSpending.class: CalcSpending.java
+# 	$(JCC) $(JFLAGS) CalcSpending.java 
+# 	$(JCC) -d $(JCLASSDIR)/. $(JFLAGS) GmailAPIcall.java
+
+# # GrepReader.class: GrepReader.java
+# # 	$(JCC) $(JFLAGS) GrepReader.java
+
+# GmailAPIcall.class: GmailAPIcall.java
+# 	$(JCC) $(JFLAGS) /helperfunctions/GmailAPIcall.java
+
+# clean:
+# 	$(RM) *.class
 
 JFLAGS = -g
+JC = javac
+JCLASSDIR = helperfunctions
+JVM = java
+FILE = 
 
-default: CalcSpending.class GrepReader.class GmailAPIcall.class
+.SUFFIXES: .java .class
 
-CalcSpending.class: CalcSpending.java
-	$(JCC) $(JFLAGS) CalcSpending.java GrepReader.java GmailAPIcall.java
+.java.class:
+	$(JC) $(JFLAGS) $*.java
 
-GrepReader.class: GrepReader.java
-	$(JCC) $(JFLAGS) GrepReader.java
+CLASSES = \
+	CalcSpending.java \
+	helperfunctions/GmailAPIcall.java \
 
-GmailAPIcall.class: GmailAPIcall.java
-	$(JCC) $(JFLAGS) GmailAPIcall.java
+MAIN = Main
 
-clean:
-	$(RM) *.class
+default: classes
+
+classes: $(CLASSES:.java=.class)
+
+run: classes #$(MAIN).class
+	$(JVM) $(MAIN)
