@@ -1,3 +1,7 @@
+import java.io.*;
+import java.net.*;
+import java.util.Date;
+
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -13,38 +17,48 @@ import com.google.api.services.gmail.GmailScopes;
 import com.google.api.services.gmail.model.*;
 import com.google.api.services.gmail.Gmail;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 
-public class GmailQuickstart {
-    /** Application name. */
-    private static final String APPLICATION_NAME =
-        "Gmail API Java Quickstart";
+public class CalcSpending {
+	public static void printinfo(URL url) throws IOException {
+		URLConnection c = url.openConnection();
+		c.connect();
 
-    /** Directory to store user credentials for this application. */
-    private static final java.io.File DATA_STORE_DIR = new java.io.File(
+		// Display some information about the URL contents
+		System.out.println("  Content type: " + c.getContentType());
+		System.out.println("  Content Encoding: " + c.getContentEncoding());
+		System.out.println("  Content Length: " + c.getContentLength());
+		System.out.println("  Date: " + new Date(c.getDate()));
+
+		// If it is an HTTP connection, display some additional information.
+		if (c instanceof HttpURLConnection) {
+			HttpURLConnection h = (HttpURLConnection) c;
+			System.out.println("  Request Method: " + h.getRequestMethod());
+			System.out.println("  Response Message: " + 
+								  h.getResponseMessage());
+			System.out.println("  Response Code: " + h.getResponseCode());
+		}
+
+	}
+	/** Application name. */
+    private static final String APPLICATION_NAME =
+        "Balance Dashboard";
+
+	/** Directory to store user credentials for this application. */
+	private static final java.io.File DATA_STORE_DIR = new java.io.File(
         System.getProperty("user.home"), ".credentials/gmail-java-quickstart");
 
-    /** Global instance of the {@link FileDataStoreFactory}. */
-    private static FileDataStoreFactory DATA_STORE_FACTORY;
+	/** Global instance of the {@link FileDataStoreFactory}. */
+	private static FileDataStoreFactory DATA_STORE_FACTORY;
+
+
+	/** Global instance of the HTTP transport. */
+    private static HttpTransport HTTP_TRANSPORT;
 
     /** Global instance of the JSON factory. */
     private static final JsonFactory JSON_FACTORY =
         JacksonFactory.getDefaultInstance();
-
-    /** Global instance of the HTTP transport. */
-    private static HttpTransport HTTP_TRANSPORT;
-
-    /** Global instance of the scopes required by this quickstart.
-     *
-     * If modifying these scopes, delete your previously saved credentials
-     * at ~/.credentials/gmail-java-quickstart
-     */
-    private static final List<String> SCOPES =
-        Arrays.asList(GmailScopes.GMAIL_LABELS);
 
     static {
         try {
@@ -56,6 +70,14 @@ public class GmailQuickstart {
         }
     }
 
+    /** Global instance of the scopes required by this quickstart.
+     *
+     * If modifying these scopes, delete your previously saved credentials
+     * at ~/.credentials/gmail-java-quickstart
+     */
+    private static final List<String> SCOPES =
+        Arrays.asList(GmailScopes.GMAIL_LABELS);
+
     /**
      * Creates an authorized Credential object.
      * @return an authorized Credential object.
@@ -64,7 +86,7 @@ public class GmailQuickstart {
     public static Credential authorize() throws IOException {
         // Load client secrets.
         InputStream in =
-            GmailQuickstart.class.getResourceAsStream("/client_secret.json");
+            CalcSpending.class.getResourceAsStream("/client_secret.json");
         GoogleClientSecrets clientSecrets =
             GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
@@ -94,24 +116,31 @@ public class GmailQuickstart {
                 .build();
     }
 
-    public static void main(String[] args) throws IOException {
-        // Build a new authorized API client service.
+  	public static Message getMessage(Gmail service, String userId, String messageId)
+      	throws IOException {
+    	Message message = service.users().messages().get(userId, messageId).execute();
+
+    	System.out.println("Message snippet: " + message.getSnippet());
+
+    	return message;
+  	}
+
+	public static void main(String[] args) throws IOException {
+		
+		// Build a new authorized API client service.
         Gmail service = getGmailService();
 
         // Print the labels in the user's account.
         String user = "me";
-        ListLabelsResponse listResponse =
-            service.users().labels().list(user).execute();
-        List<Label> labels = listResponse.getLabels();
-        if (labels.size() == 0) {
-            System.out.println("No labels found.");
-        } else {
-            System.out.println("Labels:");
-            for (Label label : labels) {
-                System.out.printf("- %s\n", label.getName());
-            }
-            GET https://www.googleapis.com/gmail/v1/users/userId/messages/id
-        }
-    }
+        String messageId = "alerts";
 
+		ListMessagesResponse listResponse =
+            service.users().messages().list(user).execute();
+
+		Message email = getMessage(service, user, messageId);
+
+        //Message emails = GMAIL.users().messages.list(userID='me');
+		System.out.println(email);
+    	System.out.println("Hello! Good job!!!!");
+	}
 }
