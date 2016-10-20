@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.Date;
+import java.util.Properties;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -16,6 +17,8 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.gmail.GmailScopes;
 import com.google.api.services.gmail.model.*;
 import com.google.api.services.gmail.Gmail;
+
+//import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
 
 import java.util.Arrays;
 import java.util.List;
@@ -76,7 +79,7 @@ public class CalcSpending {
      * at ~/.credentials/gmail-java-quickstart
      */
     private static final List<String> SCOPES =
-        Arrays.asList(GmailScopes.GMAIL_LABELS);
+        Arrays.asList(GmailScopes.GMAIL_READONLY);
 
     /**
      * Creates an authorized Credential object.
@@ -104,7 +107,7 @@ public class CalcSpending {
         return credential;
     }
 
-    /**
+    /*
      * Build and return an authorized Gmail client service.
      * @return an authorized Gmail client service
      * @throws IOException
@@ -118,6 +121,7 @@ public class CalcSpending {
 
   	public static Message getMessage(Gmail service, String userId, String messageId)
       	throws IOException {
+      	//System.out.println(service + "		" + userId + "	" + messageId);
     	Message message = service.users().messages().get(userId, messageId).execute();
 
     	System.out.println("Message snippet: " + message.getSnippet());
@@ -132,15 +136,11 @@ public class CalcSpending {
 
         // Print the labels in the user's account.
         String user = "me";
-        String messageId = "alerts";
+        String messageId = "157d3e6f3391e7d0";
+        
+        Message email = service.users().messages().get(user, messageId)
+       		.setFormat("full").execute();
 
-		ListMessagesResponse listResponse =
-            service.users().messages().list(user).execute();
-
-		Message email = getMessage(service, user, messageId);
-
-        //Message emails = GMAIL.users().messages.list(userID='me');
 		System.out.println(email);
-    	System.out.println("Hello! Good job!!!!");
 	}
 }
