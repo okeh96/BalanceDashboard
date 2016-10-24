@@ -22,6 +22,7 @@ import com.google.api.services.gmail.Gmail;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
 
 public class CalcSpending {
 	public static void printinfo(URL url) throws IOException {
@@ -129,6 +130,30 @@ public class CalcSpending {
     	return message;
   	}
 
+  	public static List<Message> listMessagesMatchingQuery(Gmail service, String userId,
+      String query) throws IOException {
+    	ListMessagesResponse response = service.users().messages().list(userId).setQ(query).execute();
+
+   		List<Message> messages = new ArrayList<Message>();
+    	while (response.getMessages() != null) {
+      		messages.addAll(response.getMessages());
+      		if (response.getNextPageToken() != null) {
+        		String pageToken = response.getNextPageToken();
+        		response = service.users().messages().list(userId).setQ(query)
+            	.setPageToken(pageToken).execute();
+      		} 
+      		else {
+        		break;
+      		}
+    	}
+
+    	for (Message message : messages) {
+    		System.out.println(message.toPrettyString());
+    	}
+
+    	return messages;
+	}
+
 	public static void main(String[] args) throws IOException {
 		
 		// Build a new authorized API client service.
@@ -137,10 +162,12 @@ public class CalcSpending {
         // Print the labels in the user's account.
         String user = "me";
         String messageId = "157d3e6f3391e7d0";
-        
-        Message email = service.users().messages().get(user, messageId)
-       		.setFormat("full").execute();
+        String searchQuery = "from:alerts@internetbanking.unfcu.org: subject:Periodic Balance";
 
-		System.out.println(email);
+
+    	List<Message> email = listMessagesMatchingQuery(service, user, searchQuery);
+
+    	
+
 	}
 }
