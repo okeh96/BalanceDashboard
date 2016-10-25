@@ -136,7 +136,8 @@ public class CalcSpending {
 
    		List<Message> messages = new ArrayList<Message>();
     	while (response.getMessages() != null) {
-      		messages.addAll(response.getMessages());
+    		messages.addAll(response.getMessages());
+    		//System.out.println(messages.get("id"));
       		if (response.getNextPageToken() != null) {
         		String pageToken = response.getNextPageToken();
         		response = service.users().messages().list(userId).setQ(query)
@@ -147,10 +148,6 @@ public class CalcSpending {
       		}
     	}
 
-    	for (Message message : messages) {
-    		System.out.println(message.toPrettyString());
-    	}
-
     	return messages;
 	}
 
@@ -159,15 +156,18 @@ public class CalcSpending {
 		// Build a new authorized API client service.
         Gmail service = getGmailService();
 
-        // Print the labels in the user's account.
+        // Sets user to authenticated instance
         String user = "me";
-        String messageId = "157d3e6f3391e7d0";
+
+        // Search query to find emails containing periodic balance
         String searchQuery = "from:alerts@internetbanking.unfcu.org: subject:Periodic Balance";
 
-
+        // Return an ArrayList containing ID's of emails returned from search query
     	List<Message> email = listMessagesMatchingQuery(service, user, searchQuery);
 
-    	
+    	for (int i = 0; i < email.size(); i++) { 		
+  			Message allmessages = getMessage(service, user, (String) email.get(i).get("id"));
+  		}
 
 	}
 }
