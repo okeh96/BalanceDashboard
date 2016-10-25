@@ -22,6 +22,7 @@ import com.google.api.services.gmail.Gmail;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
 
 public class CalcSpending {
 	public static void printinfo(URL url) throws IOException {
@@ -129,18 +130,44 @@ public class CalcSpending {
     	return message;
   	}
 
+  	public static List<Message> listMessagesMatchingQuery(Gmail service, String userId,
+      String query) throws IOException {
+    	ListMessagesResponse response = service.users().messages().list(userId).setQ(query).execute();
+
+   		List<Message> messages = new ArrayList<Message>();
+    	while (response.getMessages() != null) {
+    		messages.addAll(response.getMessages());
+    		//System.out.println(messages.get("id"));
+      		if (response.getNextPageToken() != null) {
+        		String pageToken = response.getNextPageToken();
+        		response = service.users().messages().list(userId).setQ(query)
+            	.setPageToken(pageToken).execute();
+      		} 
+      		else {
+        		break;
+      		}
+    	}
+
+    	return messages;
+	}
+
 	public static void main(String[] args) throws IOException {
 		
 		// Build a new authorized API client service.
         Gmail service = getGmailService();
 
-        // Print the labels in the user's account.
+        // Sets user to authenticated instance
         String user = "me";
-        String messageId = "157d3e6f3391e7d0";
-        
-        Message email = service.users().messages().get(user, messageId)
-       		.setFormat("full").execute();
 
-		System.out.println(email);
+        // Search query to find emails containing periodic balance
+        String searchQuery = "from:alerts@internetbanking.unfcu.org: subject:Periodic Balance";
+
+        // Return an ArrayList containing ID's of emails returned from search query
+    	List<Message> email = listMessagesMatchingQuery(service, user, searchQuery);
+
+    	for (int i = 0; i < email.size(); i++) { 		
+  			Message allmessages = getMessage(service, user, (String) email.get(i).get("id"));
+  		}
+
 	}
 }
