@@ -1,7 +1,10 @@
+import helperfunctions.*;
+
 import java.io.*;
 import java.net.*;
 import java.util.Date;
 import java.util.Properties;
+import java.util.regex.*;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -17,8 +20,6 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.gmail.GmailScopes;
 import com.google.api.services.gmail.model.*;
 import com.google.api.services.gmail.Gmail;
-
-//import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
 
 import java.util.Arrays;
 import java.util.List;
@@ -120,14 +121,16 @@ public class CalcSpending {
                 .build();
     }
 
-  	public static Message getMessage(Gmail service, String userId, String messageId)
+  	public static String getMessage(Gmail service, String userId, String messageId)
       	throws IOException {
       	//System.out.println(service + "		" + userId + "	" + messageId);
+        
     	Message message = service.users().messages().get(userId, messageId).execute();
+        String convertmessage = message.getSnippet().toString();
 
-    	System.out.println("Message snippet: " + message.getSnippet());
+    	System.out.println("Message snippet: " + convertmessage);
 
-    	return message;
+    	return convertmessage;
   	}
 
   	public static List<Message> listMessagesMatchingQuery(Gmail service, String userId,
@@ -166,7 +169,8 @@ public class CalcSpending {
     	List<Message> email = listMessagesMatchingQuery(service, user, searchQuery);
 
     	for (int i = 0; i < email.size(); i++) { 		
-  			Message allmessages = getMessage(service, user, (String) email.get(i).get("id"));
+  			String allmessages = getMessage(service, user, (String) email.get(i).get("id"));
+            //GrepReader hello = new GrepReader(allmessages, "Checking Account balance is");
   		}
 
 	}
